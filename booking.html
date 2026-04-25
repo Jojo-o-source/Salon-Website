@@ -43,12 +43,14 @@
       --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6));
     }
 
+    html,
     body {
       font-family: 'Outfit', sans-serif;
       background: var(--gradient-main);
       color: var(--text);
       line-height: 1.6;
       overflow-x: hidden;
+      touch-action: manipulation;
     }
 
     .card,
@@ -76,7 +78,8 @@
     button {
       cursor: pointer;
       border: none;
-      background: none
+      background: none;
+      touch-action: manipulation;
     }
 
     /* HEADER */
@@ -1020,6 +1023,7 @@
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
+    document.addEventListener('DOMContentLoaded', function () {
     // ── BOOKING STATE ────────────────────────────────────────────────────────────
     let currentStep = 1;
     let selectedServices = []; // Cart array
@@ -1038,12 +1042,14 @@
 
     // --- TABS LOGIC ---
     document.querySelectorAll('.cat-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
+      const tabHandler = () => {
         document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         document.querySelectorAll('.service-list-view').forEach(v => v.classList.add('hidden'));
         document.getElementById(tab.dataset.target).classList.remove('hidden');
-      });
+      };
+      tab.addEventListener('click', tabHandler);
+      tab.addEventListener('touchstart', tabHandler);
     });
 
     // --- DATES LOGIC ---
@@ -1059,12 +1065,17 @@
         const btn = document.createElement('div');
         btn.className = 'date-btn' + (i === 0 ? ' selected' : '');
         btn.innerHTML = `<div class="d-day">${days[d.getDay()]}</div><div class="d-num">${d.getDate()}</div>`;
-        btn.onclick = () => {
+        const dateHandler = () => {
           document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           selectedDate = d;
           updateSummary();
         };
+        btn.addEventListener('click', dateHandler);
+        btn.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          dateHandler();
+        });
         if (i === 0) selectedDate = d;
         strip.appendChild(btn);
       }
@@ -1073,7 +1084,7 @@
 
     // --- SERVICES LOGIC (MULTIPLE SELECTION) ---
     document.querySelectorAll('.service-card').forEach(card => {
-      card.addEventListener('click', () => {
+      const cardHandler = () => {
         const id = card.dataset.id;
         const idx = selectedServices.findIndex(s => s.id === id);
 
@@ -1093,18 +1104,22 @@
         }
 
         updateSummary();
-      });
+      };
+      card.addEventListener('click', cardHandler);
+      card.addEventListener('touchstart', cardHandler);
     });
 
     // --- TIME LOGIC ---
     document.querySelectorAll('.time-slot').forEach(slot => {
-      slot.addEventListener('click', () => {
+      const slotHandler = () => {
         document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
         slot.classList.add('selected');
         selectedTime = slot.textContent;
         updateSummary();
         btnContinue.classList.add('active');
-      });
+      };
+      slot.addEventListener('click', slotHandler);
+      slot.addEventListener('touchstart', slotHandler);
     });
 
     // --- SUMMARY UPDATE ---
@@ -1202,7 +1217,7 @@
     }
 
     // --- NAVIGATION ---
-    btnContinue.addEventListener('click', () => {
+    const continueHandler = () => {
       if (currentStep === 1 && selectedServices.length > 0) {
         currentStep = 2;
         stepServices.classList.add('hidden');
@@ -1303,9 +1318,11 @@
             setTimeout(() => { window.location.href = 'index3.html'; }, 2800);
           });
       }
-    });
+    };
+    btnContinue.addEventListener('click', continueHandler);
+    btnContinue.addEventListener('touchstart', continueHandler);
 
-    btnBack.addEventListener('click', () => {
+    const backHandler = () => {
       if (currentStep === 3) {
         currentStep = 2;
         stepDetails.classList.add('hidden');
@@ -1324,7 +1341,9 @@
       } else {
         window.location.href = 'index3.html';
       }
-    });
+    };
+    btnBack.addEventListener('click', backHandler);
+    btnBack.addEventListener('touchstart', backHandler);
 
     // Pre-select tab via URL param (e.g. booking.html?service=Skin+Treatments)
     (function () {
@@ -1345,6 +1364,7 @@
       // Scroll to top of booking layout so the service list is immediately visible
       window.scrollTo({ top: 0, behavior: 'instant' });
     })();
+    });
   </script>
 </body>
 
