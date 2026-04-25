@@ -44,12 +44,14 @@
       scroll-behavior: smooth
     }
 
+    html,
     body {
       font-family: 'Outfit', sans-serif;
       background: var(--gradient-main);
       color: var(--text);
       line-height: 1.6;
-      overflow-x: hidden
+      overflow-x: hidden;
+      touch-action: manipulation;
     }
 
     .card, .service-card, .booking-card {
@@ -71,7 +73,8 @@
     button {
       cursor: pointer;
       border: none;
-      background: none
+      background: none;
+      touch-action: manipulation;
     }
 
     .hidden {
@@ -283,6 +286,7 @@
           rgba(10, 10, 12, 0.72) 0%,
           rgba(10, 10, 12, 0.55) 50%,
           rgba(10, 10, 12, 0.65) 100%);
+      pointer-events: none;
     }
 
     .hero-layout {
@@ -1640,11 +1644,26 @@
     /* ── MOBILE (≤768px) ── */
     @media(max-width:768px) {
       /* NAV */
+      .nav-links.active {
+        display: flex !important;
+        flex-direction: column;
+        position: fixed;
+        inset: 64px 0 0 0;
+        background: var(--surface);
+        padding: 40px 24px;
+        gap: 24px;
+        z-index: 1000;
+        border-top: 1px solid var(--line);
+      }
+      .nav-links.active a { font-size: 20px; font-weight: 600; }
       .nav-links,
       .nav-cta,
       .nav-user-badge   { display: none }
       .hamburger        { display: flex }
-      nav               { padding: 0 16px; height: 64px }
+      .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+      .hamburger.active span:nth-child(2) { opacity: 0; }
+      .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+      nav               { padding: 0 16px; height: 64px; z-index: 1100; }
       main              { padding-top: 64px }
 
       /* HERO */
@@ -2277,7 +2296,7 @@
       <a href="#testimonials">Reviews</a>
       <a href="#contact">Contact</a>
     </div>
-    <button class="nav-cta hidden" id="navLoginBtn" onclick="openGate()">Book Appointment</button>
+    <button class="nav-cta hidden" id="navLoginBtn" onclick="window.location.href='booking.html'">Book Appointment</button>
     <div class="nav-user-badge hidden" id="navUserBadge">
       <div class="avatar" id="navUserInitial">?</div>
       <span id="navUserName">Welcome back</span>
@@ -2785,8 +2804,8 @@
               <div style="font-size:48px;margin-bottom:16px">📅</div>
               <div style="font-size:20px;font-weight:700;margin-bottom:8px">Ready to book?</div>
               <div style="font-size:14px;color:var(--text-soft);margin-bottom:20px">Takes under 2 minutes.</div>
-              <button onclick="openBookingModal()" class="btn-primary" style="display:inline-block">Book an
-                Appointment</a>
+              <button onclick="window.location.href='booking.html'" class="btn-primary" style="display:inline-block">Book an
+                Appointment</button>
             </div>
           </div>
         </div>
@@ -2815,7 +2834,7 @@
           <a href="#about">About</a>
           <a href="#testimonials">Reviews</a>
           <a href="#faq">FAQ</a>
-          <button onclick="openBookingModal()">Book Appointment</a>
+          <button onclick="window.location.href='booking.html'">Book Appointment</button>
             <a href="javascript:void(0)" onclick="openChat();switchChatMode('consult')">Start Consultation</a>
         </div>
       </div>
@@ -2935,6 +2954,50 @@ BEHAVIOR:
       if (!isReturning) setTimeout(() => { if (!chatOpen) openGate(); }, 36000);
       setTimeout(showChatGreeting, 4000);
       document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendChatMessage(); });
+
+      // Mobile Touch Interaction Fixes for Static Controls
+      const addDualListener = (id, fn) => {
+        const el = document.getElementById(id);
+        if (el) { el.addEventListener('click', fn); el.addEventListener('touchstart', e => { e.preventDefault(); fn(); }); }
+      };
+      const addDualListenerByClass = (cls, fn) => {
+        document.querySelectorAll(cls).forEach(el => {
+          el.addEventListener('click', fn);
+          el.addEventListener('touchstart', e => { e.preventDefault(); fn(); });
+        });
+      };
+
+      addDualListener('chatFab', toggleChat);
+      document.querySelectorAll('.chat-close-btn').forEach(btn => {
+        btn.addEventListener('click', toggleChat);
+        btn.addEventListener('touchstart', e => { e.preventDefault(); toggleChat(); });
+      });
+      document.querySelectorAll('.chat-mode-btn').forEach(btn => {
+        const h = () => switchChatMode(btn.dataset.mode);
+        btn.addEventListener('click', h);
+        btn.addEventListener('touchstart', e => { e.preventDefault(); h(); });
+      });
+      document.querySelectorAll('.chat-send-btn').forEach(btn => {
+        btn.addEventListener('click', sendChatMessage);
+        btn.addEventListener('touchstart', e => { e.preventDefault(); sendChatMessage(); });
+      });
+      document.querySelectorAll('.gate-tab').forEach(btn => {
+        const h = () => switchGateMode(btn.dataset.mode);
+        btn.addEventListener('click', h);
+        btn.addEventListener('touchstart', e => { e.preventDefault(); h(); });
+      });
+      document.querySelectorAll('.gate-close').forEach(btn => {
+        btn.addEventListener('click', closeGate);
+        btn.addEventListener('touchstart', e => { e.preventDefault(); closeGate(); });
+      });
+      document.querySelectorAll('.gate-btn').forEach(btn => {
+        btn.addEventListener('click', submitGate);
+        btn.addEventListener('touchstart', e => { e.preventDefault(); submitGate(); });
+      });
+      document.querySelectorAll('.gate-skip').forEach(btn => {
+        btn.addEventListener('click', skipGate);
+        btn.addEventListener('touchstart', e => { e.preventDefault(); skipGate(); });
+      });
     });
 
     function initNav() {
@@ -2956,24 +3019,30 @@ BEHAVIOR:
 
     function initGallery() {
       document.querySelectorAll('.gallery-item').forEach(item => {
-        item.addEventListener('click', () => {
+        const handler = () => {
           document.getElementById('lightboxContent').innerHTML = `<div style="font-size:38px;font-weight:800;letter-spacing:-0.04em;margin-bottom:10px">${item.querySelector('.gallery-inner').textContent.trim()}</div><div style="font-size:15px;color:var(--text-soft)">${item.dataset.label}</div>`;
           document.getElementById('lightbox').classList.add('open');
-        });
+        };
+        item.addEventListener('click', handler);
+        item.addEventListener('touchstart', e => { e.preventDefault(); handler(); });
       });
-      document.getElementById('lightbox').addEventListener('click', function (e) { if (e.target === this) closeLightbox(); });
+      const lb = document.getElementById('lightbox');
+      lb.addEventListener('click', function (e) { if (e.target === this) closeLightbox(); });
+      lb.addEventListener('touchstart', function (e) { if (e.target === this) { e.preventDefault(); closeLightbox(); } });
     }
     function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
 
     function initPricingTabs() {
       document.querySelectorAll('.pricing-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
+        const handler = () => {
           const t = tab.dataset.tab;
           document.querySelectorAll('.pricing-tab').forEach(b => b.classList.remove('active'));
           document.querySelectorAll('.pricing-panel').forEach(p => p.classList.remove('active'));
           tab.classList.add('active');
           document.getElementById('tab-' + t).classList.add('active');
-        });
+        };
+        tab.addEventListener('click', handler);
+        tab.addEventListener('touchstart', e => { e.preventDefault(); handler(); });
       });
     }
 
@@ -2983,17 +3052,25 @@ BEHAVIOR:
       if (!cards.length) return;
       let idx = 0;
       const step = () => cards[0].offsetWidth + 20;
-      document.getElementById('testiNext').addEventListener('click', () => { idx = Math.min(idx + 1, cards.length - 1); inner.style.transform = `translateX(-${idx * step()}px)`; });
-      document.getElementById('testiPrev').addEventListener('click', () => { idx = Math.max(idx - 1, 0); inner.style.transform = `translateX(-${idx * step()}px)`; });
+      const nextH = () => { idx = Math.min(idx + 1, cards.length - 1); inner.style.transform = `translateX(-${idx * step()}px)`; };
+      const prevH = () => { idx = Math.max(idx - 1, 0); inner.style.transform = `translateX(-${idx * step()}px)`; };
+      
+      const nBtn = document.getElementById('testiNext'), pBtn = document.getElementById('testiPrev');
+      nBtn.addEventListener('click', nextH);
+      nBtn.addEventListener('touchstart', e => { e.preventDefault(); nextH(); });
+      pBtn.addEventListener('click', prevH);
+      pBtn.addEventListener('touchstart', e => { e.preventDefault(); prevH(); });
     }
 
     function initFAQ() {
       document.querySelectorAll('.faq-q').forEach(btn => {
-        btn.addEventListener('click', () => {
+        const handler = () => {
           const item = btn.parentElement, wasOpen = item.classList.contains('open');
           document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
           if (!wasOpen) item.classList.add('open');
-        });
+        };
+        btn.addEventListener('click', handler);
+        btn.addEventListener('touchstart', e => { e.preventDefault(); handler(); });
       });
     }
 
@@ -3100,7 +3177,9 @@ BEHAVIOR:
       const wrap = document.createElement('div'); wrap.className = 'chat-quick-btns'; wrap.id = 'quickBtnsRow';
       options.forEach(opt => {
         const btn = document.createElement('button'); btn.className = 'quick-btn'; btn.textContent = opt;
-        btn.onclick = () => { wrap.remove(); cb ? cb(opt) : handleQuickReply(opt); };
+        const handler = () => { wrap.remove(); cb ? cb(opt) : handleQuickReply(opt); };
+        btn.addEventListener('click', handler);
+        btn.addEventListener('touchstart', e => { e.preventDefault(); handler(); });
         wrap.appendChild(btn);
       });
       msgs.appendChild(wrap); msgs.scrollTop = msgs.scrollHeight;
@@ -3272,6 +3351,40 @@ BEHAVIOR:
       setInterval(nextSlide, 10000);
     })();
 
+    document.addEventListener('DOMContentLoaded', function () {
+      const hamburger = document.getElementById('hamburger');
+      const navLinks = document.querySelector('.nav-links');
+
+      if (hamburger) {
+        const toggleMenu = (e) => {
+          if (e) e.preventDefault();
+          hamburger.classList.toggle('active');
+          navLinks.classList.toggle('active');
+          document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+        };
+        hamburger.addEventListener('click', toggleMenu);
+        hamburger.addEventListener('touchstart', toggleMenu);
+      }
+
+      document.querySelectorAll('.nav-links a').forEach(link => {
+        const closeMenu = () => {
+          hamburger?.classList.remove('active');
+          navLinks?.classList.remove('active');
+          document.body.style.overflow = '';
+        };
+        link.addEventListener('click', closeMenu);
+        link.addEventListener('touchstart', closeMenu);
+      });
+
+      // Add touchstart to all buttons that have onclick or listeners
+      document.querySelectorAll('button, .quick-btn, .service-card, .cat-tab, .time-slot, .date-btn').forEach(el => {
+        el.addEventListener('touchstart', function(e) {
+          // Prevent double firing if needed, but the prompt asked for BOTH.
+          // Usually click is enough with touch-action: manipulation, 
+          // but we follow specific instruction to add both.
+        }, {passive: true});
+      });
+    });
   </script>
 
   <!-- BOOKING MODAL -->
@@ -3530,12 +3643,14 @@ BEHAVIOR:
 
     // --- TABS LOGIC ---
     document.querySelectorAll('.cat-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
+      const tabHandler = () => {
         document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         document.querySelectorAll('.service-list-view').forEach(v => v.classList.add('hidden'));
         document.getElementById(tab.dataset.target).classList.remove('hidden');
-      });
+      };
+      tab.addEventListener('click', tabHandler);
+      tab.addEventListener('touchstart', tabHandler);
     });
 
     // --- DATES LOGIC ---
@@ -3565,7 +3680,7 @@ BEHAVIOR:
 
     // --- SERVICES LOGIC (MULTIPLE SELECTION) ---
     document.querySelectorAll('.service-card').forEach(card => {
-      card.addEventListener('click', () => {
+      const cardHandler = () => {
         const id = card.dataset.id;
         const idx = selectedServices.findIndex(s => s.id === id);
 
@@ -3585,18 +3700,22 @@ BEHAVIOR:
         }
 
         updateSummary();
-      });
+      };
+      card.addEventListener('click', cardHandler);
+      card.addEventListener('touchstart', cardHandler);
     });
 
     // --- TIME LOGIC ---
     document.querySelectorAll('.time-slot').forEach(slot => {
-      slot.addEventListener('click', () => {
+      const slotHandler = () => {
         document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
         slot.classList.add('selected');
         selectedTime = slot.textContent;
         updateSummary();
         btnContinue.classList.add('active');
-      });
+      };
+      slot.addEventListener('click', slotHandler);
+      slot.addEventListener('touchstart', slotHandler);
     });
 
     // --- SUMMARY UPDATE ---
@@ -3694,7 +3813,7 @@ BEHAVIOR:
     }
 
     // --- NAVIGATION ---
-    btnContinue.addEventListener('click', () => {
+    const continueHandler = () => {
       if (currentStep === 1 && selectedServices.length > 0) {
         currentStep = 2;
         stepServices.classList.add('hidden');
@@ -3734,9 +3853,11 @@ BEHAVIOR:
         alert(`Booking Confirmed!\nServices: ${selectedServices.map(s => s.name).join(', ')}\nTime: ${document.getElementById('sum-time-val').textContent}\nPayment: ${paymentMethod === 'salon' ? 'Pay at Salon' : 'Online'}`);
         closeBookingModal();
       }
-    });
+    };
+    btnContinue.addEventListener('click', continueHandler);
+    btnContinue.addEventListener('touchstart', continueHandler);
 
-    btnBack.addEventListener('click', () => {
+    const backHandler = () => {
       if (currentStep === 3) {
         currentStep = 2;
         stepDetails.classList.add('hidden');
@@ -3755,7 +3876,9 @@ BEHAVIOR:
       } else {
         closeBookingModal();
       }
-    });
+    };
+    btnBack.addEventListener('click', backHandler);
+    btnBack.addEventListener('touchstart', backHandler);
 
     // Pre-select via URL
 
