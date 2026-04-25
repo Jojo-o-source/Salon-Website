@@ -43,14 +43,12 @@
       --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6));
     }
 
-    html,
     body {
       font-family: 'Outfit', sans-serif;
       background: var(--gradient-main);
       color: var(--text);
       line-height: 1.6;
       overflow-x: hidden;
-      touch-action: manipulation;
     }
 
     .card,
@@ -78,8 +76,7 @@
     button {
       cursor: pointer;
       border: none;
-      background: none;
-      touch-action: manipulation;
+      background: none
     }
 
     /* HEADER */
@@ -664,71 +661,25 @@
       border-color: var(--error) !important;
     }
 
-    /* ── TABLET (≤768px) ── */
     @media(max-width: 768px) {
-      /* LAYOUT */
-      .booking-layout   { flex-direction: column; padding: 0 16px; margin: 16px auto; gap: 24px }
-      .main-col         { width: 100% }
+      .booking-layout {
+        flex-direction: column;
+        padding: 0 16px;
+        margin: 24px auto;
+        gap: 32px;
+      }
 
-      /* SUMMARY SIDEBAR → TOP on mobile */
-      .side-col         { width: 100%; order: -1 }
-      .summary-card     { position: static; padding: 18px }
-      .salon-info       { margin-bottom: 16px }
+      .side-col {
+        width: 100%;
+      }
 
-      /* HEADER */
-      .top-header       { padding: 12px 16px }
-      .header-title     { font-size: 16px }
-
-      /* CATEGORY TABS */
-      .category-tabs    { gap: 8px; padding-bottom: 10px; margin-bottom: 16px }
-      .cat-tab          { padding: 7px 13px; font-size: 13px }
-
-      /* SERVICE CARDS */
-      .service-card     { padding: 14px; gap: 12px }
-      .svc-name         { font-size: 14px }
-      .svc-dur          { font-size: 12px }
-      .svc-price        { font-size: 13px }
-
-      /* STEP TITLES */
-      .step-title       { font-size: 22px; margin-bottom: 18px }
-      .breadcrumbs      { font-size: 12px; margin-bottom: 16px }
-
-      /* DATE STRIP */
-      .date-btn         { width: 48px; height: 62px }
-      .date-btn .d-num  { font-size: 15px }
-      .date-btn .d-day  { font-size: 11px }
-
-      /* TIME SLOTS */
-      .time-slot        { padding: 13px; font-size: 14px }
-
-      /* FORM */
-      .form-input       { font-size: 16px }  /* prevents iOS zoom on focus */
-      .form-group       { margin-bottom: 14px }
-      .user-greeting    { flex-direction: column; align-items: flex-start; gap: 8px }
-
-      /* PAYMENT OPTIONS */
-      .payment-option   { padding: 13px }
-      .payment-option-text { font-size: 14px }
-
-      /* CONTINUE BUTTON */
-      .btn-continue     { padding: 15px; font-size: 15px }
-
-      /* SUMMARY */
-      .summary-total    { font-size: 15px; margin-bottom: 20px }
-      .summary-item     { font-size: 13px }
-
-      /* TOAST */
-      #email-toast      { font-size: 13px; padding: 12px 18px; max-width: calc(100vw - 32px); white-space: normal; text-align: center }
-    }
-
-    /* ── SMALL MOBILE (≤400px) ── */
-    @media(max-width: 400px) {
-      .booking-layout   { padding: 0 12px }
-      .step-title       { font-size: 19px }
-      .cat-tab          { padding: 6px 11px; font-size: 12px }
-      .service-card     { padding: 12px; gap: 10px }
-      .svc-name         { font-size: 13px }
-      .date-btn         { width: 42px; height: 56px }
+      #email-toast {
+        font-size: 13px;
+        padding: 12px 18px;
+        max-width: calc(100vw - 32px);
+        white-space: normal;
+        text-align: center;
+      }
     }
   </style>
 </head>
@@ -1023,7 +974,6 @@
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
     // ── BOOKING STATE ────────────────────────────────────────────────────────────
     let currentStep = 1;
     let selectedServices = []; // Cart array
@@ -1042,14 +992,12 @@
 
     // --- TABS LOGIC ---
     document.querySelectorAll('.cat-tab').forEach(tab => {
-      const tabHandler = () => {
+      tab.addEventListener('click', () => {
         document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         document.querySelectorAll('.service-list-view').forEach(v => v.classList.add('hidden'));
         document.getElementById(tab.dataset.target).classList.remove('hidden');
-      };
-      tab.addEventListener('click', tabHandler);
-      tab.addEventListener('touchstart', tabHandler);
+      });
     });
 
     // --- DATES LOGIC ---
@@ -1065,17 +1013,12 @@
         const btn = document.createElement('div');
         btn.className = 'date-btn' + (i === 0 ? ' selected' : '');
         btn.innerHTML = `<div class="d-day">${days[d.getDay()]}</div><div class="d-num">${d.getDate()}</div>`;
-        const dateHandler = () => {
+        btn.onclick = () => {
           document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           selectedDate = d;
           updateSummary();
         };
-        btn.addEventListener('click', dateHandler);
-        btn.addEventListener('touchstart', (e) => {
-          e.preventDefault();
-          dateHandler();
-        });
         if (i === 0) selectedDate = d;
         strip.appendChild(btn);
       }
@@ -1084,7 +1027,7 @@
 
     // --- SERVICES LOGIC (MULTIPLE SELECTION) ---
     document.querySelectorAll('.service-card').forEach(card => {
-      const cardHandler = () => {
+      card.addEventListener('click', () => {
         const id = card.dataset.id;
         const idx = selectedServices.findIndex(s => s.id === id);
 
@@ -1104,22 +1047,18 @@
         }
 
         updateSummary();
-      };
-      card.addEventListener('click', cardHandler);
-      card.addEventListener('touchstart', cardHandler);
+      });
     });
 
     // --- TIME LOGIC ---
     document.querySelectorAll('.time-slot').forEach(slot => {
-      const slotHandler = () => {
+      slot.addEventListener('click', () => {
         document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
         slot.classList.add('selected');
         selectedTime = slot.textContent;
         updateSummary();
         btnContinue.classList.add('active');
-      };
-      slot.addEventListener('click', slotHandler);
-      slot.addEventListener('touchstart', slotHandler);
+      });
     });
 
     // --- SUMMARY UPDATE ---
@@ -1217,7 +1156,7 @@
     }
 
     // --- NAVIGATION ---
-    const continueHandler = () => {
+    btnContinue.addEventListener('click', () => {
       if (currentStep === 1 && selectedServices.length > 0) {
         currentStep = 2;
         stepServices.classList.add('hidden');
@@ -1318,11 +1257,9 @@
             setTimeout(() => { window.location.href = 'index.html'; }, 2800);
           });
       }
-    };
-    btnContinue.addEventListener('click', continueHandler);
-    btnContinue.addEventListener('touchstart', continueHandler);
+    });
 
-    const backHandler = () => {
+    btnBack.addEventListener('click', () => {
       if (currentStep === 3) {
         currentStep = 2;
         stepDetails.classList.add('hidden');
@@ -1341,9 +1278,7 @@
       } else {
         window.location.href = 'index.html';
       }
-    };
-    btnBack.addEventListener('click', backHandler);
-    btnBack.addEventListener('touchstart', backHandler);
+    });
 
     // Pre-select tab via URL param (e.g. booking.html?service=Skin+Treatments)
     (function () {
@@ -1364,7 +1299,6 @@
       // Scroll to top of booking layout so the service list is immediately visible
       window.scrollTo({ top: 0, behavior: 'instant' });
     })();
-    });
   </script>
 </body>
 
