@@ -15,7 +15,8 @@
     *::after {
       box-sizing: border-box;
       margin: 0;
-      padding: 0
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     :root {
@@ -44,12 +45,14 @@
       scroll-behavior: smooth
     }
 
+    html { overflow-x: hidden }
     body {
       font-family: 'Outfit', sans-serif;
       background: var(--gradient-main);
       color: var(--text);
       line-height: 1.6;
-      overflow-x: hidden
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
     }
 
     .card, .service-card, .booking-card {
@@ -472,6 +475,8 @@
       display: flex;
       flex-direction: column;
       transition: transform var(--transition), box-shadow var(--transition);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
 
     .service-card:hover {
@@ -1628,609 +1633,157 @@
       background: var(--brand-hover)
     }
 
-    @media(max-width:1024px) {
+    /* ── TOUCH TARGET BASELINE: all interactive elements ≥ 44px ── */
+    .service-action, .nav-cta, .btn-primary, .btn-outline,
+    .pricing-tab, .quick-btn, .gate-btn, .gate-skip,
+    .testi-btn, .chat-mode-btn, .chat-send-btn,
+    .hamburger, .chat-fab, .faq-q {
+      min-height: 44px;
+    }
+    .service-action, .quick-btn { display: inline-flex; align-items: center; justify-content: center; }
 
+    /* ── TABLET (≤1024px) ── */
+    @media (max-width: 1024px) {
       .services-grid,
-      .pricing-panel.active {
-        grid-template-columns: 1fr 1fr
-      }
-
+      .pricing-panel.active  { grid-template-columns: 1fr 1fr }
       .trust-grid,
-      .contact-grid {
-        grid-template-columns: 1fr
-      }
-
-      .footer-grid {
-        grid-template-columns: 1fr 1fr
-      }
+      .contact-grid          { grid-template-columns: 1fr }
+      .footer-grid           { grid-template-columns: 1fr 1fr }
     }
 
-    @media(max-width:768px) {
-
+    /* ── MOBILE (≤768px) ── */
+    @media (max-width: 768px) {
+      /* NAV */
       .nav-links,
       .nav-cta,
-      .nav-user-badge {
-        display: none
+      .nav-user-badge    { display: none }
+      .hamburger         { display: flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
+      nav                { padding: 0 16px; height: 64px }
+      main               { padding-top: 64px }
+
+      /* MOBILE MENU DRAWER */
+      #mobileMenu {
+        display: flex; flex-direction: column; gap: 0;
+        position: fixed; top: 64px; left: 0; right: 0;
+        background: rgba(255,255,255,0.99);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(14px);
+        z-index: 899;
+        transform: translateY(-110%);
+        transition: transform 0.28s ease;
+        box-shadow: 0 8px 24px rgba(15,23,42,0.1);
+      }
+      #mobileMenu.open { transform: translateY(0) }
+      #mobileMenu a, #mobileMenu button {
+        display: block; padding: 16px 24px; font-size: 16px; font-weight: 600;
+        color: var(--text); border-bottom: 1px solid var(--line);
+        background: none; text-align: left; width: 100%; min-height: 56px;
+        text-decoration: none;
+      }
+      #mobileMenu .menu-book-btn {
+        background: var(--brand); color: #fff; text-align: center;
+        border-bottom: none; font-size: 15px;
       }
 
-      .hamburger {
-        display: flex
+      /* HERO */
+      #hero                   { padding: 40px 16px 52px }
+      .hero-copy h1           { font-size: clamp(30px, 8vw, 42px); letter-spacing: -0.04em }
+      .hero-copy p            { font-size: 15px }
+      .hero-actions           { flex-direction: column; width: 100%; gap: 10px }
+      .hero-actions .btn-primary,
+      .hero-actions .btn-outline {
+        width: 100%; text-align: center; padding: 15px 20px;
+        border-radius: 14px; font-size: 15px;
       }
+      .hero-stats             { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px }
+      .hero-stat              { padding: 12px }
+      .hero-stat strong       { font-size: 20px }
+      .hero-stat span         { font-size: 12px }
+      .hero-trust             { gap: 10px; justify-content: center }
+      .hero-trust-item        { font-size: 11px }
 
+      /* SECTIONS */
+      section                 { padding: 52px 16px }
+      .section-title          { font-size: clamp(22px, 6.5vw, 32px) }
+      .section-sub            { font-size: 14px }
+      .section-header         { margin-bottom: 20px }
+
+      /* GRIDS */
       .services-grid,
       .pricing-panel.active,
-      .gallery-grid {
-        grid-template-columns: 1fr
+      .gallery-grid           { grid-template-columns: 1fr }
+
+      /* SERVICE CARDS — stop card div from swallowing button taps */
+      .service-card           { padding: 24px 20px; cursor: default }
+      .service-num            { font-size: 44px; margin-bottom: 16px }
+      .service-name           { font-size: 19px }
+      .service-actions        { flex-direction: column; gap: 10px; margin-top: 20px }
+      .service-action         {
+        width: 100%; text-align: center; padding: 14px 16px;
+        font-size: 13px; border-radius: 12px;
       }
 
-      .footer-grid {
-        grid-template-columns: 1fr
+      /* PRICING */
+      .pricing-tabs           { gap: 8px }
+      .pricing-tab            { padding: 10px 14px; font-size: 12px }
+      .price-item             { flex-direction: column; gap: 6px }
+      .price-item-cost        { font-size: 20px }
+
+      /* TESTIMONIALS */
+      .testi-card             { flex: 0 0 calc(100vw - 64px) }
+
+      /* FOOTER */
+      .footer-grid            { grid-template-columns: 1fr; gap: 28px }
+      footer                  { padding: 40px 16px 24px }
+      .footer-bottom          { flex-direction: column; gap: 6px; text-align: center }
+      .footer-links button,
+      .footer-links a         { display: inline-block; font-size: 14px; min-height: 44px; line-height: 44px; }
+
+      /* CONTACT */
+      .contact-grid           { grid-template-columns: 1fr }
+
+      /* LOGIN GATE */
+      .gate-card              { padding: 28px 20px }
+      .gate-input             { font-size: 16px } /* prevents iOS zoom */
+
+      /* CHATBOT FAB */
+      #chatWidget             { right: 12px; bottom: 12px }
+      .chat-panel             {
+        width: calc(100vw - 16px); height: 75vh; max-height: 560px;
+        border-radius: 20px 20px 0 0; bottom: 0; right: 0; left: 0;
+        position: fixed; transform-origin: bottom center;
       }
-
-      .hero-stats {
-        grid-template-columns: 1fr 1fr
-      }
-
-      #chatWidget {
-        right: 12px;
-        bottom: 12px
-      }
-
-      .chat-panel {
-        width: calc(100vw - 24px)
-      }
-    }
-
-    /* --- BOOKING STYLES --- */
-    #bookingModal {
-      position: fixed;
-      inset: 0;
-      z-index: 2500;
-      background: var(--surface);
-      overflow-y: auto;
-      display: none;
-      flex-direction: column;
-    }
-
-    #bookingModal.open {
-      display: flex;
-    }
-
-
-
-
-
-    button,
-    input,
-    select,
-    textare
-
-    /* HEADER */
-    .top-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 24px;
-      border-bottom: 1px solid var(--line);
-      background: var(--surface);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      color: var(--text);
-      transition: all var(--transition);
-    }
-
-    .header-btn:hover {
-      border-color: var(--text);
-      background: var(--surface-soft);
-    }
-
-    .header-title {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    /* LAYOUT */
-    .booking-layout {
-      display: flex;
-      gap: 40px;
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 0 24px;
-    }
-
-    .main-col {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .side-col {
-      width: 360px;
-      flex-shrink: 0;
-    }
-
-    /* BREADCRUMBS */
-    .breadcrumbs {
-      font-size: 13px;
-      color: var(--text-faint);
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .breadcrumbs span {
-      color: var(--text);
-      font-weight: 500;
-    }
-
-    /* TABS */
-    .category-tabs {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      padding-bottom: 12px;
-      margin-bottom: 24px;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-
-    .category-tabs::-webkit-scrollbar {
-      display: none;
-    }
-
-    .cat-tab {
-      white-space: nowrap;
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 600;
-      border: 1px solid transparent;
-      color: var(--text-soft);
-      transition: all var(--transition);
-    }
-
-    .cat-tab.active {
-      background: var(--brand);
-      color: #fff;
-    }
-
-    .cat-tab:not(.active):hover {
-      color: var(--text);
-    }
-
-    /* SERVICE LIST */
-    .service-group-title {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      letter-spacing: -0.02em;
-    }
-
-    .service-group-desc {
-      font-size: 14px;
-      color: var(--text-soft);
-      margin-bottom: 24px;
-    }
-
-    .service-card {
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius-sm);
-      padding: 20px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      cursor: pointer;
-      transition: all var(--transition);
-    }
-
-    .service-card:hover {
-      border-color: var(--text-faint);
-    }
-
-    .service-card.selected {
-      border-color: var(--accent);
-      background: rgba(94, 71, 210, 0.03);
-    }
-
-    .svc-info {
-      flex: 1;
-    }
-
-    .svc-name {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .svc-dur {
-      font-size: 13px;
-      color: var(--text-soft);
-      margin-bottom: 8px;
-    }
-
-    .svc-price {
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .svc-add-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 1px solid var(--line-strong);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      color: var(--text-soft);
-      flex-shrink: 0;
-      background: #fff;
-      transition: all var(--transition);
-    }
-
-    .service-card.selected .svc-add-btn {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-      transform: rotate(45deg);
-    }
-
-    /* SIDEBAR SUMMARY */
-    .summary-card {
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius);
-      padding: 24px;
-      position: sticky;
-      top: 100px;
-    }
-
-    .salon-info {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-
-    .salon-thumb {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
-      background: var(--surface-soft);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 24px;
-      color: #fff;
-      background-color: var(--brand);
-    }
-
-    .salon-details h3 {
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 1.2;
-      margin-bottom: 4px;
-    }
-
-    .salon-details .rating {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .salon-details .rating span {
-      color: #facc15;
-    }
-
-    .salon-details .address {
-      font-size: 12px;
-      color: var(--text-soft);
-      margin-top: 4px;
-    }
-
-    .summary-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .summary-item {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-    }
-
-    .summary-item .item-name {
-      font-weight: 600;
-    }
-
-    .summary-item .item-price {
-      font-weight: 700;
-    }
-
-    .summary-item .item-meta {
-      font-size: 12px;
-      color: var(--text-faint);
-      margin-top: 4px;
-    }
-
-    .summary-item.time-row {
-      color: var(--accent);
-      font-weight: 600;
-      display: none;
-    }
-
-    .summary-divider {
-      height: 1px;
-      background: var(--line-strong);
-      margin: 20px 0;
-    }
-
-    .summary-total {
-      display: flex;
-      justify-content: space-between;
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 32px;
-    }
-
-    .btn-continue {
-      width: 100%;
-      background: var(--brand);
-      color: #fff;
-      padding: 14px;
-      border-radius: 999px;
-      font-size: 15px;
-      font-weight: 700;
-      text-align: center;
-      transition: all var(--transition);
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    .btn-continue.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .btn-continue.active:hover {
-      background: var(--brand-hover);
-    }
-
-    /* STEP 2: TIME SELECTION */
-    .step-title {
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      margin-bottom: 24px;
-    }
-
-    .pref-picker {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid var(--line-strong);
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 500;
-      margin-bottom: 32px;
-    }
-
-    .month-label {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    .date-strip {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      padding-bottom: 16px;
-      margin-bottom: 24px;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-
-    .date-strip::-webkit-scrollbar {
-      display: none;
-    }
-
-    .date-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 56px;
-      height: 72px;
-      border-radius: 999px;
-      border: 1px solid var(--line-strong);
-      background: var(--surface);
-      transition: all var(--transition);
-      flex-shrink: 0;
-    }
-
-    .date-btn .d-day {
-      font-size: 12px;
-      color: var(--text-soft);
-      margin-bottom: 4px;
-    }
-
-    .date-btn .d-num {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .date-btn:hover {
-      border-color: var(--text-faint);
-    }
-
-    .date-btn.selected {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-
-    .date-btn.selected .d-day {
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .time-slots {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .time-slot {
-      width: 100%;
-      text-align: left;
-      padding: 16px;
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius-sm);
-      font-size: 15px;
-      font-weight: 600;
-      transition: all var(--transition);
-    }
-
-    .time-slot:hover {
-      border-color: var(--text-faint);
-    }
-
-    .time-slot.selected {
-      border-color: var(--accent);
-      background: rgba(94, 71, 210, 0.03);
-    }
-
-    /* STEP 3: DETAILS */
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--text-soft);
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius-sm);
-      font-size: 15px;
-      transition: border-color var(--transition);
-    }
-
-    .form-input:focus {
-      border-color: var(--text);
-      outline: none;
-    }
-
-    .user-greeting {
-      background: var(--surface-soft);
-      padding: 16px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-
-    .user-greeting-text {
-      font-size: 14px;
-    }
-
-    .user-greeting-text strong {
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .btn-text {
-      font-size: 13px;
-      color: var(--accent);
-      font-weight: 600;
-    }
-
-    .btn-text:hover {
-      text-decoration: underline;
-    }
-
-    .payment-option {
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius-sm);
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-      cursor: pointer;
-      transition: all var(--transition);
-    }
-
-    .payment-option:hover {
-      border-color: var(--text-faint);
-    }
-
-    .payment-option.selected {
-      border-color: var(--accent);
-      background: rgba(94, 71, 210, 0.03);
-    }
-
-    .payment-option input[type="radio"] {
-      accent-color: var(--accent);
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-    }
-
-    .payment-option-text {
-      font-size: 15px;
-      font-weight: 600;
+      #chatWidget             { right: 0; bottom: 0; left: 0; align-items: stretch; gap: 0 }
+      .chat-fab               { align-self: flex-end; margin: 0 12px 12px auto }
+      .chat-mode-btn          { font-size: 10px; padding: 10px 4px }
+      .chat-text-input        { font-size: 16px } /* prevents iOS zoom */
+
+      /* BOOKING MODAL (inline in index3) */
+      .booking-layout         { flex-direction: column; padding: 0 16px; margin: 16px auto; gap: 24px }
+      .side-col               { width: 100%; order: -1 }
+      .summary-card           { position: static; padding: 18px }
+      .step-title             { font-size: 22px }
+      .date-btn               { width: 48px; height: 62px }
+      .date-btn .d-num        { font-size: 15px }
+      .time-slot              { padding: 14px; font-size: 15px }
+      .form-input             { font-size: 16px } /* prevents iOS zoom */
+    }
+
+    /* ── SMALL MOBILE (≤400px) ── */
+    @media (max-width: 400px) {
+      .hero-copy h1           { font-size: 28px }
+      .hero-stats             { grid-template-columns: 1fr }
+      .service-card           { padding: 20px 14px }
+    }
+
+    /* Booking modal responsive (in-page modal on index3) */
+    @media (max-width: 768px) {
+      #bookingModal           { overflow-y: auto }
+      .booking-layout         { flex-direction: column; padding: 0 12px; margin: 12px auto; gap: 20px }
+      .side-col               { width: 100%; order: -1 }
+      .summary-card           { position: static }
     }
 
-    .payment-option-sub {
-      font-size: 13px;
-      color: var(--text-faint);
-      margin-top: 2px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @media(max-width: 768px) {
-      .booking-layout {
-        flex-direction: column;
-        padding: 0 16px;
-        margin: 24px auto;
-        gap: 32px;
-      }
-
-      .side-col {
-        width: 100%;
-      }
-    }
   </style>
 </head>
 
@@ -2312,7 +1865,7 @@
             If you do not, use the consultation flow before choosing.</p>
         </div>
         <div class="services-grid reveal" style="text-align: left; margin-top: 48px;">
-          <div class="service-card" onclick="window.location.href='booking.html?service=Hair+Services'">
+          <div class="service-card" data-href="booking.html?service=Hair+Services">
             <div class="service-num">01</div>
             <div class="service-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2335,7 +1888,7 @@
                 onclick="event.stopPropagation();openChatForService('Hair Services')">CHECK SUITABILITY</button>
             </div>
           </div>
-          <div class="service-card" onclick="window.location.href='booking.html?service=Skin+Treatments'">
+          <div class="service-card" data-href="booking.html?service=Skin+Treatments">
             <div class="service-num">02</div>
             <div class="service-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2355,7 +1908,7 @@
                 onclick="event.stopPropagation();openChatForService('Skin Treatments')">CHECK SUITABILITY</button>
             </div>
           </div>
-          <div class="service-card" onclick="window.location.href='booking.html?service=Grooming'">
+          <div class="service-card" data-href="booking.html?service=Grooming">
             <div class="service-num">03</div>
             <div class="service-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2754,14 +2307,25 @@
               <div style="font-size:48px;margin-bottom:16px">📅</div>
               <div style="font-size:20px;font-weight:700;margin-bottom:8px">Ready to book?</div>
               <div style="font-size:14px;color:var(--text-soft);margin-bottom:20px">Takes under 2 minutes.</div>
-              <button onclick="openBookingModal()" class="btn-primary" style="display:inline-block">Book an
-                Appointment</a>
+              <button onclick="window.location.href='booking.html'" class="btn-primary" style="display:inline-block">Book an Appointment</button>
             </div>
           </div>
         </div>
       </div>
     </section>
   </main>
+
+  <!-- MOBILE MENU DRAWER -->
+  <nav id="mobileMenu" role="navigation" aria-label="Mobile menu">
+    <a href="#hero" onclick="closeMobileMenu()">Home</a>
+    <a href="#services" onclick="closeMobileMenu()">Services</a>
+    <a href="#about" onclick="closeMobileMenu()">About</a>
+    <a href="#gallery" onclick="closeMobileMenu()">Brands</a>
+    <a href="#testimonials" onclick="closeMobileMenu()">Reviews</a>
+    <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+    <button class="menu-book-btn" onclick="closeMobileMenu();window.location.href='booking.html'">Book Appointment</button>
+  </nav>
+  <div id="menuOverlay" onclick="closeMobileMenu()" style="display:none;position:fixed;inset:0;z-index:898;background:rgba(0,0,0,0.3)"></div>
 
   <footer>
     <div class="footer-grid">
@@ -2784,7 +2348,7 @@
           <a href="#about">About</a>
           <a href="#testimonials">Reviews</a>
           <a href="#faq">FAQ</a>
-          <button onclick="openBookingModal()">Book Appointment</a>
+          <a href="booking.html">Book Appointment</a>
             <a href="javascript:void(0)" onclick="openChat();switchChatMode('consult')">Start Consultation</a>
         </div>
       </div>
@@ -2904,6 +2468,25 @@ BEHAVIOR:
       if (!isReturning) setTimeout(() => { if (!chatOpen) openGate(); }, 36000);
       setTimeout(showChatGreeting, 4000);
       document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendChatMessage(); });
+
+      // Service card delegation — handles both tap and click correctly
+      document.querySelectorAll('.services-grid .service-card[data-href]').forEach(card => {
+        card.addEventListener('click', function(e) {
+          // If the click came from a button inside the card, do not navigate
+          if (e.target.closest('button')) return;
+          window.location.href = this.dataset.href;
+        });
+      });
+
+      // Chat panel: close on outside tap (mobile UX)
+      document.addEventListener('click', function(e) {
+        if (chatOpen && !document.getElementById('chatPanel').contains(e.target) && !document.getElementById('chatFab').contains(e.target)) {
+          // Only auto-close on mobile viewport
+          if (window.innerWidth <= 768) toggleChat();
+        }
+      });"
+
+
     });
 
     function initNav() {
@@ -2916,6 +2499,22 @@ BEHAVIOR:
       window.addEventListener('scroll', () => {
         document.getElementById('mainNav').style.background = window.scrollY > 24 ? 'rgba(255,255,255,0.98)' : 'rgba(255,255,255,0.94)';
       });
+      // Hamburger toggle
+      document.getElementById('hamburger').addEventListener('click', toggleMobileMenu);
+    }
+
+    let _menuOpen = false;
+    function toggleMobileMenu() {
+      _menuOpen = !_menuOpen;
+      document.getElementById('mobileMenu').classList.toggle('open', _menuOpen);
+      const ov = document.getElementById('menuOverlay');
+      if (ov) ov.style.display = _menuOpen ? 'block' : 'none';
+    }
+    function closeMobileMenu() {
+      _menuOpen = false;
+      document.getElementById('mobileMenu').classList.remove('open');
+      const ov = document.getElementById('menuOverlay');
+      if (ov) ov.style.display = 'none';
     }
 
     function initReveal() {
@@ -3742,28 +3341,6 @@ BEHAVIOR:
     function closeBookingModal() {
       document.getElementById('bookingModal').classList.remove('open');
     }
-
-    /* ── HERO SLIDESHOW ── */
-    (function () {
-      var slides = document.querySelectorAll('.hero-slide');
-      var total = slides.length;
-      if (!total) return;
-      var current = 0;
-      // Preload non-base64 images to prevent flicker
-      slides.forEach(function (slide) {
-        var bg = slide.style.backgroundImage;
-        var m = bg && bg.match(/url\(["']?([^"')]+)["']?\)/);
-        if (m && m[1] && m[1].indexOf('data:') !== 0) {
-          new Image().src = m[1];
-        }
-      });
-      function nextSlide() {
-        slides[current].classList.remove('active');
-        current = (current + 1) % total;
-        slides[current].classList.add('active');
-      }
-      setInterval(nextSlide, 10000);
-    })();
 
   </script>
 </body>
