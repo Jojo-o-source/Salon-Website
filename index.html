@@ -1628,57 +1628,99 @@
       background: var(--brand-hover)
     }
 
+    /* ── TABLET (≤1024px) ── */
     @media(max-width:1024px) {
-
       .services-grid,
-      .pricing-panel.active {
-        grid-template-columns: 1fr 1fr
-      }
-
+      .pricing-panel.active { grid-template-columns: 1fr 1fr }
       .trust-grid,
-      .contact-grid {
-        grid-template-columns: 1fr
-      }
-
-      .footer-grid {
-        grid-template-columns: 1fr 1fr
-      }
+      .contact-grid         { grid-template-columns: 1fr }
+      .footer-grid          { grid-template-columns: 1fr 1fr }
     }
 
+    /* ── MOBILE (≤768px) ── */
     @media(max-width:768px) {
-
+      /* NAV */
       .nav-links,
       .nav-cta,
-      .nav-user-badge {
-        display: none
-      }
+      .nav-user-badge   { display: none }
+      .hamburger        { display: flex }
+      nav               { padding: 0 16px; height: 64px }
+      main              { padding-top: 64px }
 
-      .hamburger {
-        display: flex
-      }
+      /* HERO */
+      #hero             { padding: 40px 16px 56px }
+      .hero-copy h1     { font-size: clamp(32px, 9vw, 44px); letter-spacing: -0.04em }
+      .hero-copy p      { font-size: 15px }
+      .hero-actions     { flex-direction: column; width: 100% }
+      .hero-actions .btn-primary,
+      .hero-actions .btn-outline { width: 100%; text-align: center; padding: 14px 20px }
+      .hero-stats       { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px }
+      .hero-stat        { padding: 12px }
+      .hero-stat strong { font-size: 20px }
+      .hero-stat span   { font-size: 12px }
+      .hero-trust       { gap: 10px }
+      .hero-trust-item  { font-size: 11px }
 
+      /* SECTIONS */
+      section           { padding: 52px 16px }
+      .section-title    { font-size: clamp(24px, 7vw, 34px) }
+      .section-sub      { font-size: 14px }
+      .section-header   { margin-bottom: 20px }
+
+      /* GRIDS → SINGLE COLUMN */
       .services-grid,
       .pricing-panel.active,
-      .gallery-grid {
-        grid-template-columns: 1fr
-      }
+      .gallery-grid     { grid-template-columns: 1fr }
 
-      .footer-grid {
-        grid-template-columns: 1fr
-      }
+      /* SERVICE CARDS */
+      .service-card     { padding: 24px 20px }
+      .service-num      { font-size: 44px; margin-bottom: 16px }
+      .service-name     { font-size: 19px }
+      .service-actions  { flex-direction: column }
+      .service-action   { width: 100%; text-align: center; padding: 13px 16px }
 
-      .hero-stats {
-        grid-template-columns: 1fr 1fr
-      }
+      /* PRICING */
+      .pricing-tabs     { gap: 8px }
+      .pricing-tab      { padding: 8px 14px; font-size: 12px }
+      .price-item       { flex-direction: column; gap: 8px }
+      .price-item-cost  { font-size: 20px }
 
-      #chatWidget {
-        right: 12px;
-        bottom: 12px
-      }
+      /* TESTIMONIALS */
+      .testi-card       { flex: 0 0 calc(100vw - 64px) }
 
-      .chat-panel {
-        width: calc(100vw - 24px)
-      }
+      /* FOOTER */
+      .footer-grid      { grid-template-columns: 1fr; gap: 28px }
+      footer            { padding: 40px 16px 24px }
+      .footer-bottom    { flex-direction: column; gap: 6px; text-align: center }
+
+      /* CONTACT */
+      .contact-grid     { grid-template-columns: 1fr }
+
+      /* GATE / LOGIN MODAL */
+      .gate-card        { padding: 28px 20px }
+
+      /* CHATBOT */
+      #chatWidget       { right: 12px; bottom: 12px }
+      .chat-panel       { width: calc(100vw - 24px); height: 70vh; max-height: 520px }
+      .chat-mode-btn    { font-size: 10px; padding: 8px 4px }
+
+      /* BOOKING MODAL (inline) */
+      .booking-layout   { flex-direction: column; padding: 0 16px; margin: 16px auto; gap: 24px }
+      .side-col         { width: 100%; order: -1 }
+      .summary-card     { position: static; padding: 18px }
+      .step-title       { font-size: 22px }
+      .date-btn         { width: 48px; height: 62px }
+      .date-btn .d-num  { font-size: 15px }
+      .time-slot        { padding: 14px }
+    }
+
+    /* ── SMALL MOBILE (≤400px) ── */
+    @media(max-width:400px) {
+      .hero-copy h1     { font-size: 29px }
+      .hero-stats       { grid-template-columns: 1fr }
+      .service-card     { padding: 20px 16px }
+      .chat-panel       { width: 100vw; border-radius: 16px 16px 0 0; bottom: 0; right: 0; left: 0 }
+      #chatWidget       { right: 0; bottom: 0; align-items: stretch }
     }
 
     /* --- BOOKING STYLES --- */
@@ -2219,18 +2261,7 @@
       display: none !important;
     }
 
-    @media(max-width: 768px) {
-      .booking-layout {
-        flex-direction: column;
-        padding: 0 16px;
-        margin: 24px auto;
-        gap: 32px;
-      }
-
-      .side-col {
-        width: 100%;
-      }
-    }
+    /* booking mobile handled in main @media(max-width:768px) above */
   </style>
 </head>
 
