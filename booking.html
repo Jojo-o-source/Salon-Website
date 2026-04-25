@@ -742,7 +742,7 @@
       <button id="btn-signout" class="hidden" onclick="signOut()"
         style="font-size:14px; font-weight:600; color:var(--text-soft); transition:color var(--transition);">Sign
         Out</button>
-      <button class="header-btn" onclick="window.location.href='index3.html'">✕</button>
+      <button class="header-btn" onclick="window.location.href='index.html'">✕</button>
     </div>
   </header>
 
@@ -1315,7 +1315,7 @@
             btnContinue.classList.remove('loading');
             btnContinue.textContent = 'Confirm Booking';
             // Redirect after a short delay so the toast is visible
-            setTimeout(() => { window.location.href = 'index3.html'; }, 2800);
+            setTimeout(() => { window.location.href = 'index.html'; }, 2800);
           });
       }
     };
@@ -1339,7 +1339,7 @@
         btnContinue.classList.add('active');
         updateSummary();
       } else {
-        window.location.href = 'index3.html';
+        window.location.href = 'index.html';
       }
     };
     btnBack.addEventListener('click', backHandler);
